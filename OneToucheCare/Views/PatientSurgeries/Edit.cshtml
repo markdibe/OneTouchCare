@@ -1,0 +1,140 @@
+﻿@model OneToucheCare.Models.PatientSurgeries
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+}
+
+<hr />
+<div class="card">
+    <div class="card-header bg-warning text-white text-center font-weight-bolder">
+        Edit Surgery Details
+    </div>
+    <form asp-action="Edit" enctype="multipart/form-data">
+
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="SurgeryId" />
+                    <input type="hidden" asp-for="DoctorId" />
+                    <input type="hidden" asp-for="PatientId" />
+                    <div class="form-group">
+                        <label asp-for="SurgeryName" class="control-label"></label>
+                        <input asp-for="SurgeryName" class="form-control" />
+                        <span asp-validation-for="SurgeryName" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="SurgeryDescription" class="control-label"></label>
+                        <input asp-for="SurgeryDescription" class="form-control" />
+                        <span asp-validation-for="SurgeryDescription" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="SurgeryResult" class="control-label"></label>
+                        <input asp-for="SurgeryResult" class="form-control" />
+                        <span asp-validation-for="SurgeryResult" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="SurgeryDate" class="control-label"></label>
+                        <input asp-for="SurgeryDate" class="form-control" />
+                        <span asp-validation-for="SurgeryDate" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="DoctorName" class="control-label"></label>
+                        <input asp-for="DoctorName" class="form-control" />
+                        <span asp-validation-for="DoctorName" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="SurgeryTypeId" class="control-label"></label>
+                        <select asp-for="SurgeryTypeId" class="form-control" asp-items="ViewBag.SurgeryTypeId"></select>
+                        <span asp-validation-for="SurgeryTypeId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="control-label">
+                            Upload Images
+                        </label>
+                        <input type="file" multiple asp-for="UploadedFiles" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-success text-white" />
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<hr />
+
+<div>
+    <a asp-action="Create" asp-route-id="@Model.PatientId">Back to List</a>
+</div>
+
+<div class="container">
+    <div class="row">
+        @{
+            if (ViewData["SurgeryImages"] != null)
+            {
+                IEnumerable<SurgeryImages> SurgeryImages = ViewData["SurgeryImages"] as IEnumerable<SurgeryImages>;
+                foreach (SurgeryImages image in SurgeryImages)
+                {
+                    <div class="col-md-4" id="img_@image.SurgeryImageId">
+                        <div class="card">
+                            <div class="card-header">
+                                @image.ImageName
+                            </div>
+                            <div class="card-body text-center">
+                                @{
+                                    string thisImage = "";
+                                    if (image.SurgeryImage != null)
+                                    {
+                                        thisImage = Convert.ToBase64String(image.SurgeryImage);
+                                    }
+                                }
+                                <img class="img-fluid" src="data:image/jpeg;base64,@thisImage" style="max-height:200px;" />
+                            </div>
+                            <div class="card-footer">
+                                <a class="btn btn-danger text-white" onclick="DeleteImage(@image.SurgeryImageId)">
+                                    Delete
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+
+        }
+    </div>
+</div>
+<script type="text/javascript">
+    function DeleteImage(imageid) {
+        $.ajax({
+            type: 'post',
+            contentType: 'application/json;charset=utf-8',
+            dataType: 'json',
+            url: '/PatientSurgeries/DeleteImage/' + imageid
+        }).always(function () {
+            $("#img_" + imageid).remove();
+        });
+    }
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

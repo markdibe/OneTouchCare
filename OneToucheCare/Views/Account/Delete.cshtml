@@ -1,0 +1,52 @@
+﻿@model OneToucheCare.Models.Account
+
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.UserName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.UserName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Password)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Password)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.RecoveryQuestion)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.RecoveryQuestion)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.RecoveryAnswer)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.RecoveryAnswer)
+        </dd>
+        <dt>
+            @*@Html.DisplayNameFor(model => model.AccountType)*@
+            Account Type
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.AccountType.AccountTypeName)
+        </dd>
+    </dl>
+    
+    <form asp-action="BlockAccount" asp-controller="Account">
+        <input type="hidden" asp-for="AccountId" />
+        <input type="submit" value="Block" class="btn btn-danger text-white" /> |
+        <a asp-action="ListOfAccounts">Back to List</a>
+    </form>
+</div>

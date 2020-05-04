@@ -1,0 +1,111 @@
+﻿@model OneToucheCare.Models.PatientTest
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+}
+
+<h2>Edit</h2>
+
+<h4>PatientTest</h4>
+<hr />
+<form asp-action="Edit" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-md-4">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="PatientTestId" />
+            <input type="hidden" asp-for="PatientId" />
+            <input type="hidden" asp-for="PatientDiseaseId" />
+
+            <div class="form-group">
+                <label asp-for="TestDate" class="control-label"></label>
+                <input asp-for="TestDate" class="form-control" type="date" />
+                <span asp-validation-for="TestDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TestName" class="control-label"></label>
+                <input asp-for="TestName" class="form-control" />
+                <span asp-validation-for="TestName" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="TestTypeId" class="control-label"></label>
+                <select asp-for="TestTypeId" class="form-control" asp-items="ViewBag.TestTypeId"></select>
+                <span asp-validation-for="TestTypeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="Result" class="control-label"></label>
+                <input asp-for="Result" class="form-control" />
+                <span asp-validation-for="Result" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Deduction" class="control-label"></label>
+                <input asp-for="Deduction" class="form-control" />
+                <span asp-validation-for="Deduction" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <label>Upload New Images</label>
+            <input type="file" asp-for="ImageFiles" multiple accept="image/*" />
+        </div>
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary text-white" />
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        @{
+            IEnumerable<PatientTestImages> ImageList = ViewData["ImageList"] as IEnumerable<PatientTestImages>;
+            if (ImageList != null)
+            {
+                foreach (PatientTestImages image in ImageList)
+                {
+                    <div class="col-md-3">
+                        <div class="card" id="card_@image.PatientTestImageId">
+                            <div class="card-header">
+                                @image.PatientTest.TestName
+                            </div>
+                            <div class="card-body text-center">
+                                @{
+                                    var selectedImage = Convert.ToBase64String(image.Image);
+                                }
+                                <img src="data:image/jpeg;base64,@selectedImage" style="max-height:200px;max-width:200px;" />
+                            </div>
+                            <div class="card-footer">
+                                <a class="btn btn-danger text-white" id="@image.PatientTestImageId" onclick="Delete(@image.PatientTestImageId)">
+                                    Delete
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        }
+    </div>
+    <hr />
+
+    <div>
+        <a asp-action="Create" asp-route-id="@Model.PatientId" asp-route-PatientDisease="@Model.PatientDiseaseId"> Back to List</a>
+    </div>
+
+</form>
+<script type="text/javascript">
+    function Delete(patientTestImageId) {
+        Helper.AjaxPostHeader("/Tests/DeleteThisImage/", patientTestImageId).always(function () {
+            $("#card_" + patientTestImageId).hide();
+        });
+    }
+</script>
+

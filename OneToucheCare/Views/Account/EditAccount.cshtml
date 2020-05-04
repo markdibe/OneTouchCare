@@ -1,0 +1,47 @@
+﻿@model OneToucheCare.Models.Account
+
+@{
+    ViewData["Title"] = "EditAccount";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+}
+
+<h4>Account Security </h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="EditAccount">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="AccountId" />
+            <div class="form-group">
+                <label asp-for="UserName" class="control-label"></label>
+                <input asp-for="UserName" class="form-control" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RecoveryQuestion" class="control-label"></label>
+                <input asp-for="RecoveryQuestion" class="form-control" />
+                <span asp-validation-for="RecoveryQuestion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RecoveryAnswer" class="control-label"></label>
+                <input asp-for="RecoveryAnswer" class="form-control" />
+                <span asp-validation-for="RecoveryAnswer" class="text-danger"></span>
+            </div>
+            <input type="hidden" asp-for="AccountTypeId"/>
+
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-success text-white" />
+            </div>
+        </form>
+    <a asp-action="DoctorDetails" asp-controller="Doctors">
+        back
+    </a>
+    </div>
+</div>
+
+

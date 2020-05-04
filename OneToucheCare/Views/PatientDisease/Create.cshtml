@@ -1,0 +1,156 @@
+﻿@model PatientDisease
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+}
+<div class="card">
+    <div class="card-header bg-info text-white text-center">
+        <h3> Disease </h3>
+    </div>
+
+
+
+
+
+    <form asp-controller="PatientDisease" asp-action="Create">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="DiseaseId"></label>
+                        <select asp-for="DiseaseId" asp-items="ViewBag.DiseaseId" class="form-control"></select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="DoctorName"></label>
+                        <input asp-for="DoctorName" type="text" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="DateOfDisease"></label>
+                        <input asp-for="DateOfDisease" type="date" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="FinishedFromDisease"></label>
+                        @*@Html.CheckBoxFor(model => model.FinishedFromDisease)*@
+                        <input asp-for="FinishedFromDisease" onclick="CheckIfCheked()" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group" id="ddd" style="display:none;">
+                        <label asp-for="DateOfFinish"></label>
+                        <input asp-for="DateOfFinish" type="date" class="form-control" />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label asp-for="Description"></label>
+                        <textarea asp-for="Description" class="form-control" cols="12" rows="3"></textarea>
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="card-footer">
+                <input type="submit" class="btn btn-success text-white" value="Save" />
+            </div>
+            <input type="hidden" asp-for="DoctorId" />
+            <input type="hidden" asp-for="PatientId" />
+        </div>
+    </form>
+</div>
+
+
+<table class="display nowrap" cellspacing="0" id="DiseaseTable" width="100%;">
+    <thead>
+        <tr></tr>
+    </thead>
+</table>
+
+<script type="text/javascript">
+
+    function CheckIfCheked() {
+        var isChecked = $("input[type='checkbox']#FinishedFromDisease").prop("checked");
+        if (isChecked) {
+            $("#ddd").show();
+        } else {
+            $("#ddd").hide();
+        }
+    }
+    $(function () {
+        $("#Description").resizable();
+    });
+
+    function GetDiseasesOfSelectedPatient() {
+        let PatientId = $("#PatientId").val();
+
+        Helper.AjaxPostHeader("/PatientDisease/GetDiseasesOfSelectedPatient/", PatientId).done(function (data) {
+            Helper.GenerateColumnsForDataTable(data);
+            console.log(data);
+            DiseaseDataTable(data);
+        });
+    }
+
+    function DiseaseDataTable(data) {
+        $("#DiseaseTable").DataTable({
+            data: data,
+            destroy: true,
+            responsive: true,
+            scrollY: false,
+            aoColumns: [{
+                'data': 'dateOfDisease', name: 'dateOfDisease', title: 'Date Of Disease', visible: false, defaultContent: '', render: function (data) {
+                    if (data) {
+                        return data.replace("T00:00:00", "");
+                    }
+                }
+            },
+            {
+                'data': 'dateOfFinish', name: 'dateOfFinish', title: 'Date Of Healing', visible: true, defaultContent: '', render: function (data) {
+                    if (data) {
+                        return data.replace("T00:00:00", "");
+                    }
+                }
+            },
+            { 'data': 'description', name: 'description', title: 'Description', visible: true, defaultContent: '' },
+            { 'data': 'diseaseId', name: 'diseaseId', title: 'diseaseId', visible: false, defaultContent: '' },
+            { 'data': 'doctorId', name: 'doctorId', title: 'doctorId', visible: false, defaultContent: '' },
+            { 'data': 'doctorName', name: 'doctorName', title: 'Doctor Name', visible: true, defaultContent: '' },
+            { 'data': 'patientDiseaseId', name: 'patientDiseaseId', title: 'patientDiseaseId', visible: false, defaultContent: '' },
+            { 'data': 'patientId', name: 'patientId', title: 'patientId', visible: false, defaultContent: '' },
+            { 'data': 'diseaseName', name: 'diseaseName', title: 'Disease Name', visible: true, defaultContent: '' },
+            { 'data': 'thisDoctor', name: 'thisDoctor', title: 'Disease Entered By', visible: true, defaultContent: '' },
+            {
+                data: null, name: null, title: 'Edit', render: function (data) {
+                    return "<a class='btn btn-info text-white text-center' onclick='Edit(" + data.patientDiseaseId + ")'><i class='fa fa-pencil-alt'></i></a>";
+                },
+            },
+            {
+                data: null, name: null, title: 'Medicaments', render: function (data) {
+                    return "<a class='btn btn-primary text-white' onclick='RedirectToMedicaments(" + data.patientDiseaseId + ")'><i class='fa fa-tablets'></i></a>";
+                }
+            },
+            {
+                data: null, name: null, title: 'Tests', render: function (data) {
+                    return "<a class='btn btn-warning' onclick='RedirectToTests(" + data.patientId + "," + data.patientDiseaseId + ")'><i class='fa fa-vial'></i></a>";
+                }
+            }
+            ]
+        });
+    }
+
+    function Edit(patientDiseaseId) {
+        window.location.href = "/PatientDisease/Edit/" + patientDiseaseId;
+    }
+    function RedirectToMedicaments(patientDiseaseId) {
+        window.location.href = "/PatientDiseaseMedicament/Create/" + patientDiseaseId;
+    }
+    function RedirectToTests(patientId, patientDiseaseId) {
+        window.location.href = "/Tests/Create/" + patientId + "?PatientDisease=" + patientDiseaseId + "";
+    }
+
+    $(function () {
+        GetDiseasesOfSelectedPatient();
+    });
+
+</script>

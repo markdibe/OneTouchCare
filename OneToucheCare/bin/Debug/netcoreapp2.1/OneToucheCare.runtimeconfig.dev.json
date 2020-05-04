@@ -1,0 +1,9 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "C:\\Users\\dibem.PRESIDENCY\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\dibem.PRESIDENCY\\.nuget\\packages",
+      "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+    ]
+  }
+}

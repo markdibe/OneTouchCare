@@ -1,0 +1,235 @@
+﻿@model OneToucheCare.Models.PatientTest
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+}
+<style>
+    /* Tooltip container */
+    .tooltip {
+        position: relative;
+        display: inline-block;
+        border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+    }
+
+        /* Tooltip text */
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: black;
+            color: #fff;
+            text-align: center;
+            padding: 5px 0;
+            border-radius: 6px;
+            /* Position the tooltip text - see examples below! */
+            position: absolute;
+            z-index: 1;
+        }
+
+        /* Show the tooltip text when you mouse over the tooltip container */
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+        }
+</style>
+
+<hr />
+<div class="card mb-3">
+    <div class="card-header bg-info text-white text-center">
+        <h3>Patient Tests</h3>
+    </div>
+
+    <form asp-action="Create" enctype="multipart/form-data">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="PatientId" />
+                    <input type="hidden" asp-for="PatientTestId" />
+                    <input type="hidden" asp-for="PatientDiseaseId" />
+                    <div class="form-group">
+                        <label asp-for="TestDate" class="control-label"></label>
+                        <input asp-for="TestDate" class="form-control" type="date" />
+                        <span asp-validation-for="TestDate" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="TestName" class="control-label"></label>
+                        <input asp-for="TestName" class="form-control" />
+                        <span asp-validation-for="TestName" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="TestTypeId" class="control-label"></label>
+                        <select asp-for="TestTypeId" class="form-control" asp-items="ViewBag.TestTypeId"></select>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label asp-for="Description" class="control-label"></label>
+                        <input asp-for="Description" class="form-control" />
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Result" class="control-label"></label>
+                        <input asp-for="Result" class="form-control" />
+                        <span asp-validation-for="Result" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Deduction" class="control-label"></label>
+                        <input asp-for="Deduction" class="form-control" />
+                        <span asp-validation-for="Deduction" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="file" asp-for="ImageFiles" multiple />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-success text-white" />
+            </div>
+        </div>
+
+
+    </form>
+
+
+</div>
+
+@{
+    if (ViewData["PatientTestList"] != null)
+    {
+        IEnumerable<PatientTest> PatientTestList = ViewData["PatientTestList"] as IEnumerable<PatientTest>;
+        if (PatientTestList.Count() > 0)
+        {
+            <table class="display rowspan" cellspacing="0" id="PatientTestTable">
+                <thead>
+                    <tr>
+                        <th>Test Type</th>
+                        <th>Test Name </th>
+                        <th>Test Date</th>
+                        <th>Result</th>
+                        <th>Patient Name </th>
+                        <th>Description</th>
+                        <th>Deduction</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                        <th>Test Images</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{int counter = 1;}
+                    @foreach (PatientTest patientTest in PatientTestList)
+                    {
+                        <tr id="index_@counter">
+                            <td>
+                                @patientTest.TestType.TestTypeName
+                            </td>
+                            <td>
+                                @patientTest.TestName
+                            </td>
+                            <td>
+                                @patientTest.TestDate
+                            </td>
+                            <td>
+                                @patientTest.Result
+                            </td>
+                            <td>
+                                @{ string fullName = patientTest.Patient.FirstName + " " + patientTest.Patient.LastName; }
+                                @fullName
+                            </td>
+                            <td>
+                                @patientTest.Description
+                            </td>
+                            <td>
+                                @patientTest.Deduction
+                            </td>
+                            <td>
+
+                                <a class="btn btn-info text-white" asp-action="Edit" asp-route-id="@patientTest.PatientTestId"><i class="fa fa-edit"></i></a>
+                            </td>
+                            <td>
+                                <a class="btn btn-danger text-white" asp-action="Delete" asp-route-id="@patientTest.PatientTestId"><i class="fa fa-trash"></i></a>
+                            </td>
+                            <td>
+                                <a class="btn btn-primary text-white" onclick="GetImages(@patientTest.PatientTestId,@counter)" id="image_@counter"><i class="fa fa-images"></i></a>
+                            </td>
+                        </tr>
+                        counter += 1;
+                    }
+                </tbody>
+            </table>
+
+
+            <script type="text/javascript">
+
+
+
+                $(function () {
+                    $("#PatientTestTable").DataTable({
+                        responsive: true,
+                        scrollY: false
+                    });
+                });
+
+                function GetImages(patientTestId, counter) {
+                    let index = "index_" + counter;
+                    $("#image_" + counter).hide();
+                    let builder = "<tr>";
+                    Helper.AjaxPostHeader("/Tests/GetImages/", patientTestId).done(function (data) {
+                        $(data).each(function (i, d) {
+                            builder += "<td><img src='data:image/jpeg;base64," + d.image + "' style='max-height:100px;max-width:100px;' id='img_" + d.patientTestImageId + "' onclick='DisplayImageOnModal(" + d.patientTestImageId + ")'/> </td>";
+                        });
+                        builder += "<tr>";
+                        $(builder).insertAfter("#" + index);
+                    });
+                }
+
+                function DisplayImageOnModal(PatientTestImageId) {
+                    $("#ImageModal").modal("show");
+                    Helper.AjaxPostHeader("/Tests/GetSelectedImage/", PatientTestImageId).done(function (data) {
+
+                        $("#ImageModalBody").html("<img src='data:image/jpeg;base64," + data.image + "' id='img_" + data.patientTestImageId + "' style='max-width: -moz-available;'/>");
+                        $("#ImageModalFooter").html("<button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button> <a class='btn btn-danger text-white' onclick='DeleteThisImage(" + data.patientTestImageId + ")'>Delete</a>");
+                    });
+                }
+
+                function DeleteThisImage(patientTestImageId) {
+                    if (!patientTestImageId) { return false; }
+                    Helper.AjaxPostHeader("/Tests/DeleteThisImage/", patientTestImageId).always(function () {
+                        $("#img_" + patientTestImageId).hide();
+                        $("#ImageModal").modal("hide");
+                    });
+                }
+            </script>
+        }
+    }
+}
+
+
+
+
+<div class="modal fade" id="ImageModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Image</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body form-control text-center" id="ImageModalBody">
+
+            </div>
+            <div class="modal-footer" id="ImageModalFooter">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+

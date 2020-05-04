@@ -1,0 +1,81 @@
+﻿@model OneToucheCare.Models.Doctor
+
+@{
+    ViewData["Title"] = "DoctorDetails";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+}
+
+<div class="row">
+
+    <div class="col-md-6">
+        <h4>Doctor Information</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.FirstName)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.FirstName)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.LastName)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.LastName)
+            </dd>
+
+            <dt>
+                @* @Html.DisplayNameFor(model => model.NationalityNavigation)*@
+                Nationality
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.NationalityNavigation.Name)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Profession)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Profession.Name)
+            </dd>
+        </dl>
+        <div>
+            <a asp-action="DoctorInfo" asp-controller="Doctors" class="btn btn-info text-whit">Edit</a>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <h4>Doctor Account</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                User Name
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Account.UserName)
+            </dd>
+            <dt>
+                Password
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Account.Password)
+            </dd>
+            <dt>
+                Recovery Question
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Account.RecoveryQuestion)
+            </dd>
+            <dt>
+                Recovery Answer
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Account.RecoveryAnswer)
+            </dd>
+        </dl>
+        <div>
+            <a asp-action="EditAccount" asp-controller="Account" class="btn btn-info text-white" asp-route-id="@Model.Account.AccountId">Edit</a>
+        </div>
+    </div>
+
+</div>
+

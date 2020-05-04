@@ -1,0 +1,109 @@
+﻿
+@{
+    ViewData["Title"] = "ListOfAccounts";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+<h2>Accounts</h2>
+
+<label class="">
+    Account Type
+</label>
+<select asp-items="@ViewBag.AccountTypeId" id="AccountTypeId" class="col-md-6 form-control" onchange="GetListOfAccountTypes()"></select>
+<div class="container mt-3">
+    <table id="AccountTable" name="AccountTable">
+        <thead>
+            <tr></tr>
+        </thead>
+    </table>
+</div>
+<script src="~/js/MyLib.js"></script>
+
+<script type="text/javascript">
+    function GetListOfAccountTypes() {
+        let AccountTypeId = Helper.GetElementValue("AccountTypeId");
+        $.ajax({
+            type: "post",
+            contentType: "application/json;charset=utf-8",
+            dataType: "JSON",
+            responseType: "json",
+            url: "/Account/GetListOfAccounts/" + AccountTypeId
+        }).done(function (data) {
+            console.log(data);
+            AccountDataTable(data);
+        });
+    }
+
+    function AccountDataTable(data) {
+        $("#AccountTable").DataTable({
+            search: true,
+            paging: true,
+            order: [],
+            data: data,
+            destroy:true,
+            createdRow: function (row, data, index) {
+                if (data.isBlocked == true) {
+                    $(row).addClass("alert alert-danger");
+                }
+            },
+            aoColumns: [
+                { 'data': 'accountId', name: 'accountId', title: 'accountId', visible: false, defaultContent: '' },
+                { 'data': 'userName', name: 'userName', title: 'User name ', visible: true, defaultContent: '' },
+                { 'data': 'password', name: 'password', title: 'Password', visible: true, defaultContent: '' },
+                { 'data': 'recoveryQuestion', name: 'recoveryQuestion', title: 'Recocvery question', visible: true, defaultContent: '' },
+                { 'data': 'recoveryAnswer', name: 'recoveryAnswer', title: 'recovery Answer', visible: true, defaultContent: '' },
+                { 'data': 'accountTypeId', name: 'accountTypeId', title: 'accountTypeId', visible: false, defaultContent: '' },
+                { 'data': 'isBlocked', 'name': 'isBlocked', title: 'DeletedAccount?', visible: false },
+                {
+                    data: null, name: null, title: 'edit', render: function (data) {
+
+                        return "<a class='btn btn-info text-white' onclick='Edit(" + data.accountId + ")'><i class='fa fa-edit'></i></a>";
+                    }
+                },
+                {
+                    data: null, name: null, title: 'Block', render: function (data) {
+                        if (!data.isBlocked) {
+                            return "<a class='btn btn-danger text-white' onclick='Delete(" + data.accountId + ")'><i class='fas fa-lock'></i></a>";
+                        }
+                        else { return ""; }
+                    }
+                },
+                {
+                    data: null, name: null, title: 'UnBlock', render: function (data) {
+                        if (data.isBlocked == true) {
+                            return "<a class='btn btn-warning' onclick='Unblock(" + data.accountId + ")'><i class='fas fa-unlock-alt'></i></a>";
+                        }
+                        else { return ""; }
+                    }
+                }
+            ]
+        });
+    }
+
+    function Edit(accountId) {
+        if (!accountId) { return false; }
+        window.location.href = "/Account/Edit/" + accountId;
+    }
+
+    function Delete(accountId) {
+        if (!accountId) {
+            return false;
+        }
+        window.location.href = "/Account/Delete/" + accountId;
+    }
+
+    function Unblock(AccountId) {
+        if (!AccountId) {
+            return false;
+        }
+        Helper.AjaxPostHeader("/Account/Unblock/", AccountId).always(function () {
+            GetListOfAccountTypes();
+        });
+    }
+
+
+    $(document).ready(function () {
+        GetListOfAccountTypes();
+    });
+</script>

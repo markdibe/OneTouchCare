@@ -1,0 +1,89 @@
+﻿@model OneToucheCare.Models.PatientDisease
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+}
+
+
+
+<hr />
+
+<div class="card">
+    <div class="card-header bg-warning text-white text-center">
+        <h3>
+            Edit Patient Disease
+        </h3>
+    </div>
+   
+       
+    <form asp-action="Edit">
+       
+        <div class="card-body">
+            <div class="row">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="PatientDiseaseId" />
+                <input type="hidden" asp-for="PatientId" />
+                <input type="hidden" asp-for="DoctorId" />
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="DateOfDisease" class="control-label"></label>
+                        <input asp-for="DateOfDisease" class="form-control" type="date" />
+                        <span asp-validation-for="DateOfDisease" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="DiseaseId" class="control-label"></label>
+                        <select asp-for="DiseaseId" class="form-control" asp-items="ViewBag.DiseaseId"></select>
+                        <span asp-validation-for="DiseaseId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Description" class="control-label"></label>
+                        <input asp-for="Description" class="form-control" />
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label>
+                                <input asp-for="FinishedFromDisease" /> @Html.DisplayNameFor(model => model.FinishedFromDisease)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="DateOfFinish" class="control-label"></label>
+                        <input asp-for="DateOfFinish" class="form-control" type="date" />
+                        <span asp-validation-for="DateOfFinish" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="DoctorName" class="control-label"></label>
+                        <input asp-for="DoctorName" class="form-control" />
+                        <span asp-validation-for="DoctorName" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <input type="submit" value="Save" class="btn btn-default" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+<div>
+    <a asp-action="Create">Back to List</a>
+</div>
+

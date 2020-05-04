@@ -1,0 +1,77 @@
+﻿@model OneToucheCare.Models.Patient
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+}
+@*<h5> Dr. @Model.FirstName @Model.LastName </h5>*@
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="PatientId" />
+            <div class="form-group">
+                <label asp-for="FirstName" class="control-label"></label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName" class="control-label"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FatherName" class="control-label"></label>
+                <input asp-for="FatherName" class="form-control" />
+                <span asp-validation-for="FatherName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MotherName" class="control-label"></label>
+                <input asp-for="MotherName" class="form-control" />
+                <span asp-validation-for="MotherName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Nationality" class="control-label"></label>
+                <select asp-for="Nationality" class="form-control" asp-items="ViewBag.Nationality"></select>
+                <span asp-validation-for="Nationality" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProfileImage" class="control-label"></label>
+                @{
+                    var imgSrc = "";
+                    if (Model.ProfileImage!=null)
+                    {
+                        var str = Convert.ToBase64String(Model.ProfileImage);
+                        imgSrc = "data:image/jpeg;base64," + str;
+                    }
+                }
+                <img src="@imgSrc" class="form-control" id="draggableImage"/>
+            </div>
+            <div class="form-group">
+                <label>
+                    Upload Image
+                </label>
+                <input type="file" name="Image" id="Image" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <input type="hidden" asp-for="AccountId" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("#draggableImage").draggable();
+        $("#draggableImage").resizable();
+    });
+</script>
+<div>
+    <a asp-action="Create">Back to List</a>
+</div>
+

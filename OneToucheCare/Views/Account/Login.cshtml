@@ -1,0 +1,59 @@
+﻿@model  OneToucheCare.Models.Account
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Login</title>
+    <link href="~/lib/bootstrap/bootstrap.min.css" rel="stylesheet" />
+    <script src="~/lib/bootstrap/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/popper.min.js"></script>
+    <script src="~/lib/bootstrap/bootstrap.min.js"></script>
+    <link href="~/lib/font-awesome/all.min.css" rel="stylesheet" />
+    <script src="~/lib/font-awesome/all.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="offset-md-2 col-md-6">
+
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h1 class="text-center text-white bg-dark">
+                        Login
+                    </h1>
+                </div>
+                <form asp-action="Login" asp-controller="Account" method="post">
+                    <div class="card-body">
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-text">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <input id="UserName" type="text" name="UserName" class="form-control" placeholder="User Name or Email" asp-for="UserName" />
+                        </div>
+
+                        <div class="input-group ">
+                            <div class="input-group-text">
+                                <i class="fas fa-key"></i>
+                            </div>
+                            <input id="Password" type="password" name="Password" class="form-control" placeholder="Enter your password" asp-for="Password" />
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="input-group">
+                            <button asp-action="Login" asp-controller="Account" class="btn btn-primary text-white" type="submit">
+                                Login
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

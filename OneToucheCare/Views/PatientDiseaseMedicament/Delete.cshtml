@@ -1,0 +1,50 @@
+﻿@model OneToucheCare.Models.PatientDiseaseMedicaments
+
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+}
+
+<h3 class="text-center">Are you sure you want to delete this?</h3>
+<div>
+    <h4>Patient Disease Medicaments</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Dose)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Dose)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.TimesPerDay)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.TimesPerDay)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.DateStart)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.DateStart)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.DateFinish)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.DateFinish)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Medicament)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Medicament.Name)
+        </dd>
+    </dl>
+    
+    <form asp-action="DeletePatientDiseaseMedicaments">
+        <input type="hidden" asp-for="PatientDiseaseMedicamentId" />
+        <input type="submit" value="Delete" class="btn btn-danger text-white" />
+        <a asp-action="Create" asp-route-id="@Model.PatientDiseaseId">Back to List</a>
+    </form>
+</div>

@@ -1,0 +1,176 @@
+﻿@model OneToucheCare.Models.Patient
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+}
+
+<div class="card mb-3">
+    <div class="card-header bg-info text-white text-center">
+        <h3>Doctor Patients</h3>
+    </div>
+
+
+    <form asp-action="Create" enctype="multipart/form-data">
+        <div class="card-body">
+            <div class="row">
+
+                <div class="col-md-3">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label>
+                            User name
+                        </label>
+                        <input type="text" class="form-control" asp-for="UserName" required />
+                        <span class="text-danger" asp-validation-for="UserName"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            Password
+                        </label>
+                        <input type="text" asp-for="Password" class="form-control" required />
+                        <span class="text-danger" asp-validation-for="Password"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="FirstName" class="control-label"></label>
+                        <input asp-for="FirstName" class="form-control" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="LastName" class="control-label"></label>
+                        <input asp-for="LastName" class="form-control" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="FatherName"></label>
+                        <input type="text" asp-for="FatherName" class="form-control" />
+                        <span asp-validation-for="FatherName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="MotherName"></label>
+                        <input type="text" asp-for="MotherName" class="form-control" />
+                        <span class="text-danger" asp-validation-for="MotherName"></span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="Nationality" class="control-label"></label>
+                        <select asp-for="Nationality" class="form-control" asp-items="ViewBag.Nationality"></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Profile Image</label>
+                        <input type="file" name="Image" id="Image" class="form-control" />
+                        @*<span asp-validation-for="ProfileImage" class="text-danger"></span>*@
+                    </div>
+
+                    <input type="hidden" asp-for="AccountId" />
+
+                    <p>
+                        @ViewBag.FeedBack
+                    </p>
+                </div>
+
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-success text-white" />
+            </div>
+        </div>
+
+    </form>
+
+</div>
+<table class="display nowrap" width="100%" cellspacing="0" id="PatientTable">
+    <thead>
+        <tr></tr>
+    </thead>
+</table>
+
+<script type="text/javascript">
+
+
+
+    function GetPatientsOfSelectedDoctor() {
+        Helper.AjaxPost("/Patients/PatientListOfSelectedDoctor", null).done(function (data) {
+            console.log(data);
+            Helper.GenerateColumnsForDataTable(data);
+            PatientDataTable(data);
+        });
+    }
+
+    function PatientDataTable(data) {
+        $("#PatientTable").DataTable({
+            search: true,
+            data: data,
+            responsive: true,
+            destroy: true,
+            order: [],
+            paging: true,
+            scrollY: false,
+            aoColumns: [
+                { 'data': 'doctorId', name: 'doctorId', title: 'doctorId', visible: false, defaultContent: '' },
+                { 'data': 'patientId', name: 'patientId', title: 'patientId', visible: false, defaultContent: '' },
+                { 'data': 'patientDoctorId', name: 'patientDoctorId', title: 'patientDoctorId', visible: false, defaultContent: '' },
+                { 'data': 'firstName', name: 'firstName', title: 'first Name', visible: true, defaultContent: '' },
+                { 'data': 'lastName', name: 'lastName', title: 'last name', visible: true, defaultContent: '' },
+                { 'data': 'fatherName', name: 'fatherName', title: 'father Name', visible: true, defaultContent: '' },
+                { 'data': 'motherName', name: 'motherName', title: 'mother name', visible: true, defaultContent: '' },
+                { 'data': 'name', name: 'name', title: 'name', visible: true, defaultContent: '' },
+                {
+                    'data': 'profileImage', name: 'profileImage', title: 'profile Image', visible: true, defaultContent: '', render: function (data) {
+                        return "<img src='data:image/jpeg;base64," + data + "' style='max-width:100px;max-height:100px;'>";
+                    }
+                },
+                {
+                    data: null, name: null, title: 'Edit', render: function (data) {
+                        return "<a class='btn btn-primary' onclick='Edit(" + data.patientId + ")'><i class='fa fa-edit text-white'></i></a>";
+                    }
+                },
+                {
+                    data: null, name: null, title: 'Illness', render: function (data) {
+                        return "<a class='btn btn-info' onclick='Illness(" + data.patientId + ")'><i class='fa fa-tablets text-white'></i></a>";
+                    }
+                }, {
+                    data: null, name: null, title: 'Tests', render: function (data) {
+                        return "<a class='btn btn-warning' onclick='Tests(" + data.patientId + ")'><i class='fa fa-vial text-white'></i></a>";
+                    }
+                },
+                {
+                    data: null, name: null, title: 'Surgeries', render: function (data) {
+                        return "<a class='btn btn-success text-white' onclick='RedirectToSurgeries(" + data.patientId + ")'><i class='fa fa-syringe'></i></a>";
+                    }
+                }
+            ]
+        });
+    }
+
+    function RedirectToSurgeries(patientId) {
+        window.location.href = "/PatientSurgeries/create/" + patientId;
+    }
+
+    function Tests(patientId) {
+        window.location.href = "/Tests/Create/" + patientId;
+    }
+
+    function Illness(patientId) {
+        window.location.href = "/PatientDisease/Create/" + patientId;
+    }
+
+
+    function Edit(id) {
+        if (!id) { return false; }
+        window.location.href = "/Patients/Edit/" + id;
+    }
+
+    $(document).ready(function () {
+        GetPatientsOfSelectedDoctor();
+    });
+</script>
+
+

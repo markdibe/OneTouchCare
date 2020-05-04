@@ -1,0 +1,227 @@
+﻿@model OneToucheCare.Models.PatientSurgeries
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+}
+<div class="card">
+    <div class="card-header bg-info text-white">
+        Patient Surgeries
+    </div>
+
+    <form asp-action="Create" enctype="multipart/form-data">
+        <div class="card-body">
+
+            <div class="row">
+                <div class="col-md-4">
+                    <input type="hidden" asp-for="PatientId" />
+                    <input type="hidden" asp-for="DoctorId" />
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="SurgeryName" class="control-label"></label>
+                        <input asp-for="SurgeryName" class="form-control" />
+                        <span asp-validation-for="SurgeryName" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="SurgeryDescription" class="control-label"></label>
+                        <input asp-for="SurgeryDescription" class="form-control" />
+                        <span asp-validation-for="SurgeryDescription" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="SurgeryResult" class="control-label"></label>
+                        <input asp-for="SurgeryResult" class="form-control" />
+                        <span asp-validation-for="SurgeryResult" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="SurgeryDate" class="control-label"></label>
+                        <input asp-for="SurgeryDate" class="form-control" type="date" />
+                        <span asp-validation-for="SurgeryDate" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="DoctorName" class="control-label"></label>
+                        <input asp-for="DoctorName" class="form-control" />
+                        <span asp-validation-for="DoctorName" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="SurgeryTypeId" class="control-label"></label>
+                        <select asp-for="SurgeryTypeId" class="form-control" asp-items="ViewBag.SurgeryTypeId"></select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label class="control-label">Upload Images</label>
+                    <input type="file" multiple asp-for="UploadedFiles" />
+                </div>
+            </div>
+
+        </div>
+        <div class="card-footer">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-success text-white" />
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<br />
+<div class="container">
+    <div class="row" id="Images">
+
+    </div>
+</div>
+<div class="container">
+    @{
+        if (ViewData["PatientSurgeryList"] != null)
+        {
+            IEnumerable<PatientSurgeries> PatientSurgeryList = ViewData["PatientSurgeryList"] as IEnumerable<PatientSurgeries>;
+            <table class="display nowrap" width="100%;" cellspacing="0" id="SurgeryTable">
+                <thead>
+                    <tr>
+                        <th>Surgery Entered By</th>
+                        <th>Surgery Made By</th>
+                        <th>Patient Name</th>
+                        <th>Surgery date</th>
+                        <th>Surgery Name</th>
+                        <th>Surgery Description</th>
+                        <th>Surgery Result</th>
+                        <th>Surgery Type</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                        <th>Images</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ foreach (PatientSurgeries ps in PatientSurgeryList)
+                        {
+                            <tr id="r_@ps.SurgeryId">
+                                <td>@ps.Doctor.FirstName</td>
+                                <td>@ps.DoctorName</td>
+                                <td>@ps.Patient.FirstName  @ps.Patient.LastName</td>
+                                <td>@{
+                                    if (ps.SurgeryDate != null)
+                                    {
+                                        @ps.SurgeryDate.Value.ToString("d")
+                                    }
+                                 } </td>
+                                <td>@ps.SurgeryName</td>
+                                <td>@ps.SurgeryDescription</td>
+                                <td>@ps.SurgeryResult</td>
+                                <td>@ps.SurgeryType.SurgeryTypeName</td>
+                                <td>
+                                    <a class="btn btn-info text-white" asp-action="Edit" asp-route-id="@ps.SurgeryId">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a class="btn btn-danger text-white" asp-action="Delete" asp-route-id="@ps.SurgeryId">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a class="btn btn-primary text-white" onclick="GetImage(@ps.SurgeryId)">
+                                        <i class="fa fa-images"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+            <script type="text/javascript">
+                function GetImage(surgeryId) {
+                    if (!surgeryId) {
+                        return false;
+                    }
+                    $.ajax({
+                        type: "post",
+                        contentType: "application/json;charset=utf-8",
+                        dataType: "json",
+                        url: "/PatientSurgeries/GetImages/" + surgeryId,
+                    }).done(function (data) {
+                        let builder = "<div>";
+                        $(data).each(function (i, d) {
+                            builder += "<img style='max-width:100px;max-height:100px;' src='data:image/jpeg;base64," + d.surgeryImage + "' class='col-md-3' onclick='DisplayImageOnModal(" + d.surgeryImageId + ")'/>";
+                        });
+                        builder += "<a class='btn btn-dark text-white' onclick='hideImages()'>x</a></div>";
+                        $("#Images").html(builder);
+                    });
+                }
+
+                function hideImages() {
+                    $("#Images").html("");
+                }
+
+                $(function () {
+                    $("table").DataTable({
+                        responsive: true,
+                        scrollY: false
+                    });
+                });
+
+                function DisplayImageOnModal(imageid) {
+                    $("#ImageModal").modal("show");
+                    $.ajax({
+                        type: 'post',
+                        contentType: 'application/json;charset=utf-8',
+                        dataType: 'json',
+                        url: '/PatientSurgeries/GetSelectedImage/' + imageid
+                    }).done(function (data) {
+                        $("#ImageModalBody").html("<img src='data:image/jpeg;base64," + data.surgeryImage + "' class='img-fluid'/>");
+                        $("#ImageModalFooter").html("<a class='btn btn-danger text-white' onclick='DeleteImage(" + data.surgeryImageId + ")'>Delete</a>");
+                    });
+                }
+
+                function DeleteImage(imageid) {
+                    $.ajax({
+                        type: 'post',
+                        contentType: 'application/json;charset=utf-8',
+                        dataType: 'json',
+                        url: '/PatientSurgeries/DeleteImage/' + imageid
+                    }).always(function () {
+                        $("#ImageModal").modal("hide");
+                        $("#Images").html("");
+                    });
+                }
+            </script>
+        }
+    }
+</div>
+
+<div class="modal fade" id="ImageModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Image</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body form-control" id="ImageModalBody">
+
+            </div>
+            <div class="modal-footer" id="ImageModalFooter">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+
+
+
+
